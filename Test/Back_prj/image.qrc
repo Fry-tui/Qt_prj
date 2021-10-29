@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/back/car">
+        <file alias="car_1">image/car_main.gif</file>
+        <file>image/test.gif</file>
+    </qresource>
+</RCC>
