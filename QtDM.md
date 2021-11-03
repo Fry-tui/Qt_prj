@@ -31,7 +31,7 @@
 ### 2、构思
 
 ```c++
-//👇以下只是初期的一个设计构思的记录
+//👇以下"仅"是初期的一个设计构思的记录
 👉开发技术
 基本控件使用：QComboBox、QCanlendar、QPainter、QtCharts、3D、音频控件、视频控件
 
@@ -93,13 +93,11 @@ QWidget *window() const;      // 所得所在的独立窗口
 
 而下面这个函数可以得到窗口的父窗口：
 QWidget *parentWidget() const;    // 得到父窗口  
-
 ```
 
 #### 1.3、窗口设置
 
 ```c++
-
 窗口标题
 WindowTitle 属性表示窗口的标题，与之相关的成员函数如下：
 QString windowTitle() const;    // 获得窗口标题  
@@ -139,7 +137,6 @@ bool isHidden() const;   // 判断窗口是否隐藏
 virtual void setVisible(bool visible);   // 设置窗口是否隐藏  
 void setHidden(bool hidden);    // 等价于 setvisible(!hidedn);
 
-
 bool isMinimized() const;     // 判断窗口是否为最小化  
 bool isMaximized() const;    // 判断窗口是否为最大化  
 bool isFullScreen() const;   // 判断窗口是否为全屏  
@@ -174,13 +171,17 @@ void setDisabled(bool disabled);     // 等价于 setEnabled(!disable)，这是�
 
 //窗口移动
 this->setPoreshs("canMove",true);//类似的一个东西,后续补全
+
 ```
+
+​	![image-20211103215403330](img/tmp_1.0.1.png)
 
 ### 2、QLineEdit
 
+```c++
+//介绍
 单行文本编辑控件，使用者可以通过很多函数，输入和编辑单行文本，比如撤销、恢复、剪切、粘贴以及拖放等。
 
-```c++
 我们可以使用 setText() 或者 insert() 改变其中的文本，通过 text() 获得文本，通过 displayText() 获得显示的文本，使用 setSelection() 或者 selectAll() 选中文本，选中的文本可以通过cut()、copy()、paste()进行剪切、复制和粘贴，使用 setAlignment() 设置文本的位置。
 
 文本改变时会发出 textChanged() 信号；如果不是由setText()造成文本的改变，那么会发出textEdit()信号；鼠标光标改变时会发出cursorPostionChanged()信号；当返回键或者回车键按下时，会发出returnPressed()信号。
@@ -188,7 +189,7 @@ this->setPoreshs("canMove",true);//类似的一个东西,后续补全
 当编辑结束，或者LineEdit失去了焦点，或者当返回/回车键按下时，editFinished()信号将会发出。
 ```
 
-#### 控件函数
+#### 2.1、基本函数
 
 ```c++
 //设置文本输入的位置
@@ -242,7 +243,9 @@ isClearButtonEnabled()       #获取是否开启清空按钮
 
 ```
 
-#### 自动补全
+#### 2.2、拓展功能
+
+##### 2.2.1、自动补全
 
 示例:补全邮箱后缀
 
@@ -302,7 +305,7 @@ void Widget::onTextChanged(const QString& str)
 }
 ```
 
-#### 自动联想
+##### 2.2.2、自动联想
 
 ```c++
 QStringList list;
@@ -314,7 +317,26 @@ line = new QLineEdit(this);
 line->setCompleter(completer);
 ```
 
-#### 编辑功能
+##### 2.2.3、自定义行为
+
+```c++
+QAction * action = new QAction(ui->Login_Pwd_box);
+action->setIcon(QIcon("://visual.png"));
+ui->Login_Pwd_box->addAction(action,QLineEdit::TrailingPosition);
+//QLineEdit.TrailingPosition     #在文本框后端显示图标
+//QLineEdit.LeadingPosition      #在文本框前端显示图标
+def change_action():
+    pass
+action.triggered.connect(change_action)   #行为触发程序
+        
+
+```
+
+##### 2.2.4、密码眼睛
+
+参考网址：https://zhuanlan.zhihu.com/p/335517807；
+
+#### 2.3、编辑功能
 
 ```cmd
 QLineEdit.backspace()  # 删除光标左侧字符或选中的文本
@@ -331,30 +353,9 @@ QLineEdit.setDragEnabQLineEditd(True)  # 设置文本可拖放
 QLineEdit.seQLineEditctAll()
 ```
 
-#### 自定义行为
-
-```c++
-QAction * action = new QAction(ui->Login_Pwd_box);
-action->setIcon(QIcon("://visual.png"));
-ui->Login_Pwd_box->addAction(action,QLineEdit::TrailingPosition);
-//QLineEdit.TrailingPosition     #在文本框后端显示图标
-//QLineEdit.LeadingPosition      #在文本框前端显示图标
-def change_action():
-    pass
-action.triggered.connect(change_action)   #行为触发程序
-        
-
-```
-
-#### 密码眼睛
-
-参考网址：https://zhuanlan.zhihu.com/p/335517807；
-
-
-
 ### 3、QLabe
 
-#### 图片添加
+#### 3.1、图片添加
 
 ```c++
 //框图
@@ -448,13 +449,19 @@ void setCurrentIndex(int index);
 void setCurrentWidget(QWidget * widget);
 ```
 
-
-
 ## 三、功能模块
 
 ### 1、Qss样式
 
-#### 1.2、用法格式
+#### 1.1、 ui设计方式
+
+```c
+直接在ui界面想要加样式的控件或者窗体右键→改变样式表即可
+```
+
+#### 1.2、.qss资源
+
+##### 1.2.1、资源文件
 
 ```css
 QLineEdit#Login_Pwd_box{
@@ -507,7 +514,7 @@ QLineEdit:read-only {
 
 ```
 
-#### 1.3、引用方式
+##### 1.2.2、引用方式
 
 ```c++
 QFile qss("://login.qss");
@@ -523,11 +530,19 @@ if( qss.open(QFile::ReadOnly)){
 }
 ```
 
+#### 1.3、源码添加
 
+##### 1.3.1、字符库
+
+```c++
+//未实现
+```
 
 ### 2、QSqlite
 
 #### 2.1、数据操作
+
+##### 2.2.1、打开数据库(法一)
 
 ```c++
 //打开数据库
@@ -552,9 +567,26 @@ void MainWindow::on_actionActOpenDB_triggered()
     }
 
 //打开数据表
-    openTable();
+    //openTable();
 }
 
+```
+
+##### 2.2.2、打开数据库(法二)
+
+```c++
+if(QSqlDatabase::contains("qt_sql_default_connection"))
+    db = QSqlDatabase::database("qt_sql_default_connection");
+else
+    db = QSqlDatabase::addDatabase("QSQLITE");
+
+db.setDatabaseName("login.db");
+db.open();
+```
+
+#### 2.2、数据表操作
+
+```c++
 //打开数据表
 void MainWindow::openTable()
 {//打开数据表
@@ -623,7 +655,7 @@ void MainWindow::on_currentRowChanged(const QModelIndex &current, const QModelIn
 }
 ```
 
-#### 2.2、QSqlTableModel
+##### QSqlTableModel
 
 ```c++
 tabModel->setSort(排序字段列号,排序方式); //排序	Qt::AscendingOrder升		Qt::DescendingOrder降
@@ -638,6 +670,12 @@ setEditStrategy(QSqlTableModel::OnManualSubmit);
 QSqlTableModel::OnFieldChange		任意更改实时保存
 QSqlTableModel::OnRowChange			单行更改实时保存
 QSqlTableModel::OnManualSubmit		手动保存
+```
+
+#### 2.3、增删查改语句
+
+```c++
+
 ```
 
 ### 3、OpenCV
@@ -662,7 +700,19 @@ Tcp/IP框架
 
 ## 五、功能设计
 
+### 5.1、目录结构
 
+#### 5.1.1、server
+
+```c++
+//图片
+```
+
+#### 5.1.2、client
+
+```c++
+//图片
+```
 
 ## 六、代码实现
 
