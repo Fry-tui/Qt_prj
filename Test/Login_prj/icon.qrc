@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>visual.png</file>
+        <file>unvisual.png</file>
+        <file>login.qss</file>
+        <file alias="u">user.png</file>
+        <file alias="car">car_main.gif</file>
+        <file alias="car_3d">car_slow_3d.gif</file>
+        <file>car.gif</file>
+        <file>car_2.gif</file>
+    </qresource>
+</RCC>

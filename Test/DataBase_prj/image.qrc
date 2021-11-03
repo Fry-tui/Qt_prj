@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="open">icon/open.png</file>
+        <file alias="add">icon/add.png</file>
+        <file alias="delPic">icon/deletePhoto.png</file>
+        <file alias="delUser">icon/deleteUser.png</file>
+        <file alias="exit">icon/exit.png</file>
+        <file alias="insert">icon/insert.png</file>
+        <file alias="Pic">icon/photo.png</file>
+        <file alias="revert">icon/revert.png</file>
+        <file alias="sub">icon/submit.png</file>
+        <file alias="up">icon/up.png</file>
+    </qresource>
+</RCC>

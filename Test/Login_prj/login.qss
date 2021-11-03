@@ -1,0 +1,48 @@
+QLineEdit#Login_Pwd_box{
+    /* 外边框: */
+    border:2px solid #0021ff;
+
+    /* 倒角 */
+    border-radius: 30px;
+
+    /*  内边框:上下和左右的距离*/
+    padding: 10 8px;
+
+    /* 背景色 */
+    /*background: #00fff7;*/
+
+    /* 选中高亮背色 */
+    selection-background-color:blue;
+    min-width:200px;
+    min-height:40px;
+}
+
+QLineEdit#Login_User_box{
+    /* 外边框:border:2px solid #ff9933; */
+
+
+    /* 倒角 */
+    border-radius: 50px;
+
+    /*  内边框:上下和左右的距离*/
+    padding: 10 8px;
+
+    /* 背景色 */
+    /*background: #ff6633;*/
+
+    /* 选中高亮背色 */
+    selection-background-color:blue;
+    min-width:200px;
+    min-height:40px;
+}
+
+/* 密码模式 */
+QLineEdit[echoMode="2"] {
+    lineedit-password-character:9679;
+}
+
+/* 当是只读模式时 */
+QLineEdit:read-only {
+    background:red;
+}
+
