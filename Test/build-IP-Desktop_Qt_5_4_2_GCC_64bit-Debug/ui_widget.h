@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
@@ -23,25 +24,24 @@ QT_BEGIN_NAMESPACE
 class Ui_Widget
 {
 public:
-    QLineEdit *le_port;
-    QPushButton *btn_act;
-    QPushButton *btn_stop;
+    QLabel *label;
+    QLineEdit *lineEdit;
+    QPushButton *pushButton;
 
     void setupUi(QWidget *Widget)
     {
         if (Widget->objectName().isEmpty())
             Widget->setObjectName(QStringLiteral("Widget"));
         Widget->resize(400, 300);
-        le_port = new QLineEdit(Widget);
-        le_port->setObjectName(QStringLiteral("le_port"));
-        le_port->setGeometry(QRect(30, 10, 113, 27));
-        btn_act = new QPushButton(Widget);
-        btn_act->setObjectName(QStringLiteral("btn_act"));
-        btn_act->setGeometry(QRect(170, 10, 99, 27));
-        btn_stop = new QPushButton(Widget);
-        btn_stop->setObjectName(QStringLiteral("btn_stop"));
-        btn_stop->setEnabled(false);
-        btn_stop->setGeometry(QRect(280, 10, 99, 27));
+        label = new QLabel(Widget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(30, 30, 261, 31));
+        lineEdit = new QLineEdit(Widget);
+        lineEdit->setObjectName(QStringLiteral("lineEdit"));
+        lineEdit->setGeometry(QRect(20, 70, 113, 27));
+        pushButton = new QPushButton(Widget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setGeometry(QRect(20, 120, 99, 27));
 
         retranslateUi(Widget);
 
@@ -51,9 +51,8 @@ public:
     void retranslateUi(QWidget *Widget)
     {
         Widget->setWindowTitle(QApplication::translate("Widget", "Widget", 0));
-        le_port->setPlaceholderText(QApplication::translate("Widget", "port", 0));
-        btn_act->setText(QApplication::translate("Widget", "act", 0));
-        btn_stop->setText(QApplication::translate("Widget", "stop", 0));
+        label->setText(QApplication::translate("Widget", "send:", 0));
+        pushButton->setText(QApplication::translate("Widget", "send", 0));
     } // retranslateUi
 
 };

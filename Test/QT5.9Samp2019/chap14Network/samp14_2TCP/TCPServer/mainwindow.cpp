@@ -138,7 +138,9 @@ void MainWindow::on_actStart_triggered()
     QString     IP=ui->comboIP->currentText();//IP地址
     quint16     port=ui->spinPort->value();//端口
     QHostAddress    addr(IP);
-    tcpServer->listen(addr,port);//
+    //tcpServer->listen(addr,port);
+    //QHostAddress::AnyIPv4
+    tcpServer->listen(QHostAddress::AnyIPv4,port);
 //    tcpServer->listen(QHostAddress::LocalHost,port);// Equivalent to QHostAddress("127.0.0.1").
     ui->plainTextEdit->appendPlainText("**开始监听...");
     ui->plainTextEdit->appendPlainText("**服务器地址："

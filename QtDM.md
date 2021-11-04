@@ -11,6 +11,7 @@
 | 2021/10/28 |  1.0.0   |  项目设计  | xyq  |
 | 2021/10/30 |  1.0.1   |  控件学习  | xyq  |
 | 2021/11/02 |  1.0.2   | 模块化学习 | xyq  |
+| 2021/11/03 |  1.0.3   |  框架搭建  | xyq  |
 
 [TOC]
 
@@ -449,6 +450,59 @@ void setCurrentIndex(int index);
 void setCurrentWidget(QWidget * widget);
 ```
 
+### 5、QMessageBox
+
+```c++
+//信息弹窗
+QMessageBox::information(NULL, "Title", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+//错误弹窗
+QMessageBox::critical(NULL, "critical", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+//警告
+QMessageBox::warning(NULL, "warning", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+
+//询问
+QMessageBox::question(NULL, "question", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+```
+
+### 6、QHash
+
+```c++
+//头文件
+#include <QHash>
+```
+
+```c++
+//定义
+QHash<QString, QString> map;
+
+//插入
+map.insert("3name", "leo");
+map.insert("1age", "18");
+map.insert("2like", "eat");
+map.insert("4sex", "man");
+
+//遍历
+QHash<QString, QString>::iterator i;
+//生成一张哈希表，遍历时候怎么添加就怎么展示
+for( i=map.begin(); i!=map.end(); ++i)
+    qDebug() << i.key() <<"        " << i.value();
+
+//查找
+QHash<QString, QString>::iterator mi; 
+mi = map.find("2like");
+if(mi != map.end())
+{
+    qDebug() << mi.key() <<"：" << mi.value();
+    ++mi;
+    if(mi != map.end())
+        qDebug() << mi.key() <<"：" << mi.value();
+}
+```
+
+
+
 ## 三、功能模块
 
 ### 1、Qss样式
@@ -675,7 +729,15 @@ QSqlTableModel::OnManualSubmit		手动保存
 #### 2.3、增删查改语句
 
 ```c++
+//查询所有的语句
+QSqlQuery query;
+query.exec("select * from student");
+while(query.next())
+{
+    qDebug() << query.value(0).toInt()  << query.value(1).toString();
+}
 
+query.exec(QString("insert into user values (%1,'%2')").arg(wname).arg(wpwd));
 ```
 
 ### 3、OpenCV
@@ -686,17 +748,144 @@ QSqlTableModel::OnManualSubmit		手动保存
 
 ## 四、通信框架
 
-Tcp/IP框架
+### 4.1、.pro
+
+```shell
+QT       += network
+    
+# The following define makes your compiler emit warnings if you use
+# any feature of Qt which as been marked as deprecated (the exact warnings
+# depend on your compiler). Please consult the documentation of the
+# deprecated API in order to know how to port your code away from it.
+DEFINES += QT_DEPRECATED_WARNINGS
+
+# You can also make your code fail to compile if you use deprecated APIs.
+# In order to do so, uncomment the following line.
+# You can also select to disable deprecated APIs only up to a certain version of Qt.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+```
+
+### 4.2、server
+
+#### 4.2.1、头文件:	
 
 ```c++
-//server
+#include <QtNetwork>
+#include <QTcpServer>
+```
+
+#### 4.2.2、构造函数
+
+```c++
+Widget::Widget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Widget)
+{
+    ui->setupUi(this);
+    tcpServer=new QTcpServer(this);
+}
+```
+
+#### 4.2.3、开启|断开
+
+```c++
+void Widget::on_btn_act_clicked()
+{
+    //判断页面的lineEdit输入框是否为空
+    if(ui->le_port->text()==""){
+        QMessageBox::critical(NULL, "Error", "input empty", QMessageBox::Close, QMessageBox::Close);
+        return;
+    }
+	
+    //获取输入框里的端口号
+    quint16 port=ui->le_port->text().toInt();
+
+    //开启监听指定端口号,所有IP地址
+    qDebug()<<"listen"<<endl;
+    tcpServer->listen(QHostAddress::AnyIPv4,port);
+
+    //等待连接,关联信号与槽函数
+    qDebug()<<"accept"<<endl;
+    connect(tcpServer,SIGNAL(newConnection()),this,SLOT(onNewConnection()));
+
+   	//按钮的使能与否
+    ui->btn_act->setEnabled(false);
+    ui->btn_stop->setEnabled(true);
+}
+
+void Widget::on_btn_stop_clicked()
+{
+    //判断是否处于监听状态
+    if(tcpServer->isListening()){
+        tcpServer->close();
+        ui->btn_act->setEnabled(true);
+        ui->btn_stop->setEnabled(false);
+    }
+}
+```
+
+#### 4.2.3、函数
+
+```c++
+//获取本地IP地址
+//如果是和多个客户端通信这个函数是暂时用不到的
+QString MainWindow::getLocalIP()
+{//获取本机IPv4地址
+    QString hostName=QHostInfo::localHostName();//本地主机名
+    QHostInfo   hostInfo=QHostInfo::fromName(hostName);
+    QString   localIP="";
+
+    QList<QHostAddress> addList=hostInfo.addresses();//
+
+    if (!addList.isEmpty())
+    for (int i=0;i<addList.count();i++)
+    {
+        QHostAddress aHost=addList.at(i);
+        if (QAbstractSocket::IPv4Protocol==aHost.protocol())
+        {
+            localIP=aHost.toString();
+            break;
+        }
+    }
+    return localIP;
+}
+```
+
+```c++
+/* nextPendingConnection():
+ * 获取连接上的套接字对象，
+ * 也叫客户端的套接号，
+ * 也叫客户端在服务器链接时的端口号，
+ * 用于和客户端联系用的。
+ * 例如在接收信号的槽内，
+ * 接收对象用它来找到发送对象的
+*/
+void Widget::onNewConnection()
+{
+    list_sockfd[list_sockfd.size()] = new QTcpSocket();
+    list_sockfd[list_sockfd.size()] = tcpServer->nextPendingConnection(); //创建socket
+    qDebug()<<list_sockfd[list_sockfd.size()]<<endl;
+    
+
+    //connect(tcpSocket, SIGNAL(connected()),
+            //this, SLOT(onClientConnected()));
+    //onClientConnected();
+}
+```
+
+
+
+### 4.3、client
+
+```c++
 
 ```
 
 ```c++
-//client
 
 ```
+
+
 
 ## 五、功能设计
 
@@ -799,7 +988,71 @@ E: 无法修正错误，因为您要求某些软件包保持现状，就是它�
 //问题描述:每次调用数据库操作类就会提示链接已存在请勿重复连接,加了isOpen()的判断也是没有用,后来才知道要判断的不是db是否open
 ```
 
+### 6、程序异常结束(TCP crashed)
 
+又一次报错:
+
+​	![image-20211104000100883](img/Error_1.2.png)
+
+定位问题源码
+
+```c++
+Widget::Widget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Widget)
+{
+    ui->setupUi(this);
+
+    //listen
+    QString IP="127.0.0.1";
+    QHostAddress addr(IP);
+    tcpServer->listen(addr,0);//👈👈👈出问题的语句👉tcpServer是指针没有new空间
+
+    //accept
+    //tcpServer=new QTcpServer(this);
+    //connect(tcpServer,SIGNAL(newConnection()),this,SLOT(onNewConnection()));
+}
+```
+
+### 7、error: invalid use of incomplete type 'struct Q...'
+
+​	![image-20211104094740211](img/Error_1.3.png)
+
+```c++
+//错误源码
+#include <QTcpServer>
+
+class Widget : public QWidget
+{
+private:
+    QTcpSocket  *tcpClient;  //socket
+};
+
+//问题描述:定义tcpClient为QTcpSocket类型对象,但是头文件包含错误
+
+//修正代码
+#include <QTcpSocket>
+
+class Widget : public QWidget
+{
+private:
+    QTcpSocket  *tcpClient;  //socket
+};
+```
+
+### 8、程序异常结束(qdebug.h)
+
+```c++
+问题描述:执行程序的时候逻辑没有问题,正常跑完了一个槽函数,但是在退出之际程序崩溃了,加了很多qDebug()测试,锁定的问题的位置每次都不太一样,后来发现是qdebug包含的头文件错了
+
+//错误
+#include <qdebug.h>
+
+//修正
+#include <qDebug>
+
+应该要包含的是类qDebug而不是头文件qdebug.h,大抵是qdebug.h也有一个qDebug()函数,但实现的方法不同导致指针异常
+```
 
 ## 八、移植步骤
 
@@ -816,5 +1069,6 @@ E: 无法修正错误，因为您要求某些软件包保持现状，就是它�
 | 00005   | 许玉泉 | 21/11/02 | [Ready]自定义信号学习,页面操作学习               |
 | 00006   | 许玉泉 | 21/11/03 | [Ready]TCP学习                                   |
 | 00007   | 许玉泉 | 21/11/03 | [Project]服务器搭建,数据库合入,控件提取,页面预留 |
-| 00008   | 许玉泉 |          | [Project]客户端页面搭建,摄像头预留,数据预留      |
+| 00008   | 许玉泉 | 21/11/05 | [Project]客户端页面搭建,摄像头预留,数据预留      |
+| 00009   |        |          |                                                  |
 

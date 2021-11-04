@@ -58,7 +58,7 @@ void Widget::onNewConnection()
 
     connect(map.find(tcpSocket->peerAddress().toString()).value(),SIGNAL(connected()),this, SLOT(onClientDisconnected()));
 
-    free(tcpSocket);
+    //free(tcpSocket);
 }
 
 void Widget::onClientConnected()
